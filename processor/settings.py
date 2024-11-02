@@ -163,5 +163,6 @@ CORS_ALLOW_HEADERS = (
 CORS_ALLOWED_ORIGINS = [
 
     "http://localhost:3000",
+    "https://nx-craft.vercel.app",
     
 ]
