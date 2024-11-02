@@ -32,8 +32,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
-    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,8 +73,8 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'processor.wsgi.application'
-ASGI_APPLICATION = "processor.asgi.application"
+WSGI_APPLICATION = 'processor.wsgi.application'
+# ASGI_APPLICATION = "processor.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
