@@ -43,6 +43,7 @@ class ContactUS(models.Model):
     _id = models.CharField(max_length=100, primary_key=True, editable=False, unique=True)
     name = models.CharField(max_length=100, db_index=True, default='')
     subject = models.CharField(max_length=100, db_index=True, default='')
+    contact_no = models.PositiveBigIntegerField(db_index=True, default=0)
     email = models.EmailField(db_index=True, default='')
     message_detail = models.TextField(db_index=True, default='')
     date = models.DateTimeField(auto_now_add=True)

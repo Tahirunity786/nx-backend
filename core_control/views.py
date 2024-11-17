@@ -35,4 +35,5 @@ class ContactView(APIView):
                 "success":"Your message has recieved successfully"
             }
             return Response(response, status=status.HTTP_200_OK)
+        print(contact.errors)
         return Response(contact.errors, status=status.HTTP_400_BAD_REQUEST)
