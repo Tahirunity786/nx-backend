@@ -5,7 +5,7 @@ from django.views.decorators.vary import vary_on_cookie, vary_on_headers
 from rest_framework.views import Response, APIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from core_control.serializer import ServicesSerializer
+from core_control.serializer import ContactSerializer, ServicesSerializer
 from core_control.models import Service
 
 
@@ -22,3 +22,17 @@ class ServicesSpreaderView(APIView):
         services = Service.objects.all()
         serializer = ServicesSerializer(services, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ContactView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        contact = ContactSerializer(data=request.data)
+        if contact.is_valid():
+            contact.save()
+            
+            response = {
+                "success":"Your message has recieved successfully"
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        return Response(contact.errors, status=status.HTTP_400_BAD_REQUEST)

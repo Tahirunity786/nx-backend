@@ -11,6 +11,7 @@ class Service(models.Model):
     title = models.CharField(max_length=100, db_index=True)
     services_slug = models.SlugField(max_length=300, unique=True, blank=True, editable=False)
     description = models.TextField(db_index=True)
+    technologies = models.ManyToManyField('Technologies', db_index=True)
 
     class Meta:
         verbose_name = "Service"
@@ -33,3 +34,25 @@ class Service(models.Model):
 
     def __str__(self):
         return self.title
+
+class Technologies(models.Model):
+    title = models.CharField(max_length=100, db_index=True)
+    description = models.TextField(db_index=True)
+
+class ContactUS(models.Model):
+    _id = models.CharField(max_length=100, primary_key=True, editable=False, unique=True)
+    name = models.CharField(max_length=100, db_index=True, default='')
+    subject = models.CharField(max_length=100, db_index=True, default='')
+    email = models.EmailField(db_index=True, default='')
+    message_detail = models.TextField(db_index=True, default='')
+    date = models.DateTimeField(auto_now_add=True)
+    file_assignment = models.FileField(upload_to='client/contact', null=True, blank=True, db_index=True)
+
+    def __str__(self)->None:
+        return f"Message has been sent by {self.name} at {self.date}"
+    
+    def save(self, *args, **kwargs):
+        if not self._id:
+            self._id = f'service_{uuid.uuid4()}'
+        super().save(*args, **kwargs)
+    
