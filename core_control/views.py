@@ -1,17 +1,11 @@
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-from django.views.decorators.vary import vary_on_cookie, vary_on_headers
-
 from rest_framework.views import Response, APIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from core_control.serializer import ContactSerializer, ServicesSerializer
 from core_control.models import Service
+from core_control.email import send_nx_email
 
 
-
-# @method_decorator(cache_page(60 * 60 * 2), name='dispatch')
-# @method_decorator(vary_on_cookie, name='dispatch')
 class ServicesSpreaderView(APIView):
     permission_classes = [AllowAny]
 
@@ -27,13 +21,26 @@ class ContactView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        contact = ContactSerializer(data=request.data)
-        if contact.is_valid():
-            contact.save()
-            
-            response = {
-                "success":"Your message has recieved successfully"
-            }
+        # Validate the incoming data
+        serializer = ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            # Save the data and access serialized data
+            saved_contact = serializer.save()
+            # Access saved instance data directly
+            serialize_data = serializer.data
+
+            # Log email for debugging
+            email = serialize_data.get("email")
+            name = serialize_data.get("name")
+            print(name)
+
+            # Send email asynchronously for scalability
+            if email:
+                send_nx_email(email, name)
+
+            # Return success response
+            response = {"success": "Your message has been received successfully."}
             return Response(response, status=status.HTTP_200_OK)
-        print(contact.errors)
-        return Response(contact.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Handle validation errors
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

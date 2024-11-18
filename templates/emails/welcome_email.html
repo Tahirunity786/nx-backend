@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        .header {
+            text-align: center;
+            background-color: #000000;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        .header img {
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+        .content {
+            margin-top: 20px;
+            color: #333333;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #777777;
+        }
+        .footer a {
+            color: #000000;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ logo_url }}" alt="NX Craft Logo" />
+            <h1>Welcome to NX Craft</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ client_name }},</p>
+            <p>We are delighted to welcome you to NX Craft!</p>
+            <p>Thank you for registering with us. We are committed to providing you with the best services and a seamless experience.</p>
+        </div>
+        <div class="footer">
+            <p>Best Regards,</p>
+            <p>NX Craft Team</p>
+            <p><a href="{{ website_url }}">www.nxcraft.com</a></p>
+        </div>
+    </div>
+</body>
+</html>
