@@ -18,13 +18,13 @@ def send_nx_email(client_email, client_name="Valued User"):
     """
     try:
         # Email subject and sender
-        subject = "Welcome to NX Craft"
+        subject = "NX Craft - Thanks for contacting with us."
         sender_email = settings.EMAIL_HOST_USER  # Use Django's email configuration
 
         # Render email content with dynamic variables
-        html_content = render_to_string("emails/welcome_email.html", {
+        html_content = render_to_string("emails/contact.html", {
             "client_name": client_name,
-            "logo_url": "https://res.cloudinary.com/dx9xdlbae/image/upload/e_improve:outdoor/Images/tlkoddhhexulduzotyhz",
+            "logo_url": "https://sitif62914q.pythonanywhere.com/static/media/nx-craft.webp",
             "website_url": "https://www.nxcraft.com",
         })
 

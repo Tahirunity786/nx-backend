@@ -163,8 +163,9 @@ CORS_ALLOW_HEADERS = (
 CORS_ALLOWED_ORIGINS = [
 
     "http://localhost:3000",
-    "https://nx-craft.vercel.app",
-    
+    "https://nxcraft.com",
+
+
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

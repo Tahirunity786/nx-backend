@@ -32,7 +32,6 @@ class ContactView(APIView):
             # Log email for debugging
             email = serialize_data.get("email")
             name = serialize_data.get("name")
-            print(name)
 
             # Send email asynchronously for scalability
             if email:
@@ -41,6 +40,6 @@ class ContactView(APIView):
             # Return success response
             response = {"success": "Your message has been received successfully."}
             return Response(response, status=status.HTTP_200_OK)
-
+        print(serializer.errors)
         # Handle validation errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
