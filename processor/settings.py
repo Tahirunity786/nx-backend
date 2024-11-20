@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core_control.apps.CoreControlConfig',
     'core_message.apps.CoreMessageConfig',
+    'core_blog.apps.CoreBlogConfig',
     'rest_framework',
     "corsheaders",
     'cloudinary',
@@ -164,6 +165,7 @@ CORS_ALLOWED_ORIGINS = [
 
     "http://localhost:3000",
     "https://nxcraft.com",
+    "http://192.168.18.162:3000",
 
 
 ]

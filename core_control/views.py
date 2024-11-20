@@ -25,7 +25,7 @@ class ContactView(APIView):
         serializer = ContactSerializer(data=request.data)
         if serializer.is_valid():
             # Save the data and access serialized data
-            saved_contact = serializer.save()
+            serializer.save()
             # Access saved instance data directly
             serialize_data = serializer.data
 
@@ -36,10 +36,8 @@ class ContactView(APIView):
             # Send email asynchronously for scalability
             if email:
                 send_nx_email(email, name)
-
             # Return success response
             response = {"success": "Your message has been received successfully."}
             return Response(response, status=status.HTTP_200_OK)
-        print(serializer.errors)
         # Handle validation errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
