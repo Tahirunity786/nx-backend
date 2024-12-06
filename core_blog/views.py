@@ -1,7 +1,9 @@
+from uuid import UUID
 from django.core.cache import cache
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
 from .models import BlogPost
 from .serializer import BlogSerializer
@@ -44,3 +46,23 @@ class BlogsView(APIView):
         
         # Return paginated response
         return paginator.get_paginated_response(paginated_blogs)
+
+
+
+class BlogDetailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, key):
+        try:
+            # Validate UUID
+            UUID(key)
+        except ValueError:
+            return Response({"error": "Invalid UUID provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            blog_detail = BlogPost.objects.get(id=key)
+        except BlogPost.DoesNotExist:
+            return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        post_serialize = BlogSerializer(blog_detail).data
+        return Response(post_serialize, status=status.HTTP_200_OK)
