@@ -46,7 +46,7 @@ class BlogPost(models.Model):
     post_slug = models.SlugField(max_length=300, unique=True, blank=True, editable=False)
     content = RichTextField()
     tag = models.CharField(max_length=100, default="")
-    date_posted = models.DateField(auto_now_add=True)
+    date_posted = models.DateTimeField(auto_now_add=True)
     comments = models.ManyToManyField('Comment', related_name='blog_posts', blank=True)
 
     class Meta:

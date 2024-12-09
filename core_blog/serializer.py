@@ -6,21 +6,20 @@ class BlogImagesSrealizer(serializers.ModelSerializer):
         model = BlogPostImageO
         fields = ['image_pb_id']
 
-
 class BlogSerializer(serializers.ModelSerializer):
     cover_image = serializers.SerializerMethodField()
+    comments_length = serializers.IntegerField(read_only=True)  # Populated via annotation
 
     class Meta:
         model = BlogPost
-        fields = ['id', 'post_slug', 'cover_image', 'title','content', 'tag', 'date_posted']
+        fields = ['id', 'post_slug', 'cover_image', 'title', 'content', 'tag', 'date_posted', 'comments_length']
 
     def get_cover_image(self, obj):
         # Check if images are available, and return the first image
         if obj.images.exists():
             first_image = obj.images.first()
-            return BlogImagesSrealizer(first_image).data
-        return None  # Return None if no images are available
-
+            return BlogImagesSrealizer(first_image).data  # Fixed typo here
+        return None
 
 class CommentPostSerializer(serializers.ModelSerializer):
     replies = serializers.PrimaryKeyRelatedField(

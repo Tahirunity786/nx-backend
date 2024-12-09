@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
 from .models import BlogPost, Comment
 from .serializer import BlogSerializer, CommentPostSerializer
+from django.db.models import Count
 
 class BlogsView(APIView):
     """
@@ -34,7 +35,7 @@ class BlogsView(APIView):
         
         if not blogs_data:
             # Query database and serialize data
-            blogs = BlogPost.objects.all().order_by('-date_posted')
+            blogs = BlogPost.objects.annotate(comments_length=Count('comment')).all().order_by('-date_posted')
             blogs_data = BlogSerializer(blogs, many=True).data
             
             # Store serialized data in cache
