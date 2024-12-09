@@ -78,7 +78,5 @@ class PortfolioImages(models.Model):
 
 
 class Portfolio(models.Model):
-    image = models.ForeignKey(PortfolioImages, on_delete=models.CASCADE, default="")
+    image = models.ManyToManyField(PortfolioImages, db_index=True)
     description = models.TextField(default="", db_index=True)
-
-

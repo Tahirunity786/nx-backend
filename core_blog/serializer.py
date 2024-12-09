@@ -38,6 +38,8 @@ class CommentPostSerializer(serializers.ModelSerializer):
             'user_subject', 
             'user_message', 
             'comment_on_comment', 
-            'replies'
+            'replies',
+            'date_posted',
+
         ]
         read_only_fields = ['id', 'replies']
