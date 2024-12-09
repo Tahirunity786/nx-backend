@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core_blog.models import BlogPostImageO, BlogPost
+from core_blog.models import BlogPostImageO, BlogPost, Comment
 
 class BlogImagesSrealizer(serializers.ModelSerializer):
     class Meta:
@@ -20,3 +20,24 @@ class BlogSerializer(serializers.ModelSerializer):
             first_image = obj.images.first()
             return BlogImagesSrealizer(first_image).data
         return None  # Return None if no images are available
+
+
+class CommentPostSerializer(serializers.ModelSerializer):
+    replies = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=True
+    )
+    user_email = serializers.EmailField(write_only=True)
+
+    class Meta:
+        model = Comment
+        fields = [
+            'id', 
+            'user_name', 
+            'user_email', 
+            'user_subject', 
+            'user_message', 
+            'comment_on_comment', 
+            'replies'
+        ]
+        read_only_fields = ['id', 'replies']

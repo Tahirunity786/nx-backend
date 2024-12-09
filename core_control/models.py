@@ -71,3 +71,14 @@ class ContactUS(models.Model):
             self._id = f'service_{uuid.uuid4()}'
         super().save(*args, **kwargs)
 
+
+class PortfolioImages(models.Model):
+    media = models.ImageField(upload_to="portfolio", default="", db_index=True)
+    tag = models.CharField(max_length=100, default="", db_index=True)
+
+
+class Portfolio(models.Model):
+    image = models.ForeignKey(PortfolioImages, on_delete=models.CASCADE, default="")
+    description = models.TextField(default="", db_index=True)
+
+

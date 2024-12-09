@@ -1,8 +1,8 @@
 from rest_framework.views import Response, APIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from core_control.serializer import ContactSerializer, ServicesSerializer
-from core_control.models import Service
+from core_control.serializer import ContactSerializer, PorfolioSerializer, ServicesSerializer
+from core_control.models import Portfolio, Service
 from core_control.email import send_nx_email
 
 
@@ -41,3 +41,13 @@ class ContactView(APIView):
             return Response(response, status=status.HTTP_200_OK)
         # Handle validation errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PortfolioView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        portfolio_data = Portfolio.objects.all().order_by('-id')
+        sanitized_data = PorfolioSerializer(portfolio_data, many=True).data
+        return Response(sanitized_data, status=status.HTTP_200_OK)
+    
+

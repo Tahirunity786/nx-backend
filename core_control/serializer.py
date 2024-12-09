@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core_control.models import ContactUS, Service
+from core_control.models import ContactUS, Portfolio, PortfolioImages, Service
 
 class ServicesSerializer(serializers.ModelSerializer):
     _id = serializers.CharField(read_only=True)
@@ -28,3 +28,15 @@ class ContactSerializer(serializers.ModelSerializer):
             'contact_no': {'required': False, 'help_text': 'Optional contact number'},
             'message_detail': {'required': True, 'help_text': 'Details of the message'},
         }
+
+
+class PortfolioImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PortfolioImages
+        fields = ('media', 'tag')
+
+class PorfolioSerializer(serializers.ModelSerializer):
+    image = PortfolioImagesSerializer(many=True)
+    class Meta:
+        model = Portfolio
+        fields = ('image', 'description')

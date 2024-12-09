@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
-from .models import BlogPost
-from .serializer import BlogSerializer
+from .models import BlogPost, Comment
+from .serializer import BlogSerializer, CommentPostSerializer
 
 class BlogsView(APIView):
     """
@@ -21,7 +21,7 @@ class BlogsView(APIView):
         """
         Custom pagination class for blog posts.
         """
-        page_size = 10  # Number of items per page
+        page_size = 12  # Number of items per page
         page_size_query_param = 'page_size'  # Allows client to customize the page size
         max_page_size = 100  # Maximum allowed page size
 
@@ -47,7 +47,13 @@ class BlogsView(APIView):
         # Return paginated response
         return paginator.get_paginated_response(paginated_blogs)
 
+class LimitedBlogView(APIView):
+    permission_classes = [AllowAny]
 
+    def get(self, request):
+        blogs = BlogPost.objects.all().order_by('-date_posted')[:3]
+        blogs_data = BlogSerializer(blogs, many=True).data
+        return Response(blogs_data, status=status.HTTP_200_OK)
 
 class BlogDetailView(APIView):
     permission_classes = [AllowAny]
@@ -66,3 +72,34 @@ class BlogDetailView(APIView):
 
         post_serialize = BlogSerializer(blog_detail).data
         return Response(post_serialize, status=status.HTTP_200_OK)
+
+class PostCommentView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, key):
+        comment_data = CommentPostSerializer(data=request.data)
+        if comment_data.is_valid():
+            try:
+                blog = BlogPost.objects.get(id=key)
+            except BlogPost.DoesNotExist:
+                return Response({'success': False, "message": "Post does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+    
+            # Create the comment instance and assign the blog post to it
+            comment_data.save(comment_on_post=blog)
+            
+            # Return the success response
+            return Response({'success': True, "message": "Your comment has been successfully posted."}, status=status.HTTP_200_OK)
+        
+        return Response({'success': False}, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, key):
+
+        try:
+            blog = BlogPost.objects.get(id=key)
+        except BlogPost.DoesNotExist:
+            return Response({'success':False}, status=status.HTTP_400_BAD_REQUEST)
+        comments = Comment.objects.filter(comment_on_post=blog)
+        # Serialize the queryset with many=True
+        sanitized_data = CommentPostSerializer(comments, many=True).data
+        return Response(sanitized_data, status=status.HTTP_200_OK)
+
