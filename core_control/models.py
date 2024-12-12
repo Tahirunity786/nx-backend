@@ -1,7 +1,7 @@
 from typing import Optional
 import uuid
 from cloudinary.uploader import upload as cloudinary_upload, destroy as cloudinary_destroy
-
+from ckeditor.fields import RichTextField
 from django.db import models
 from django.utils.text import slugify
 
@@ -80,3 +80,31 @@ class PortfolioImages(models.Model):
 class Portfolio(models.Model):
     image = models.ManyToManyField(PortfolioImages, db_index=True)
     description = models.TextField(default="", db_index=True)
+
+
+
+
+class Education(models.Model):
+    college_name = models.CharField(max_length=100, default="", db_index=True)
+    degree = models.CharField(max_length=100, default="", db_index=True)
+    from_year = models.DateField(db_index=True)
+    to_year = models.DateField(db_index=True)
+
+
+class Awards(models.Model):
+    institue_name = models.CharField(max_length=100, default="", db_index=True)
+    awar_name = models.CharField(max_length=100, default="", db_index=True)
+    year = models.DateField(db_index=True)
+
+class Skills(models.Model):
+    skill_name = models.CharField(max_length=100, default="", db_index=True)
+
+
+class Profile(models.Model):
+    profile = models.ImageField(upload_to='profiles', db_index=True)
+    full_name = models.CharField(max_length=100, default="", db_index=True)
+    bio = models.TextField(db_index=True)
+    experience = models.TextField(db_index=True)
+    education = models.ManyToManyField(Education, db_index=True)
+    awards = models.ManyToManyField(Awards, db_index=True)
+    skills = models.ManyToManyField(Skills, db_index=True)
