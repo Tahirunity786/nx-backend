@@ -75,11 +75,16 @@ class ContactUS(models.Model):
 class PortfolioImages(models.Model):
     media = models.ImageField(upload_to="portfolio", default="", db_index=True)
     tag = models.CharField(max_length=100, default="", db_index=True)
+    def __str__(self) -> str:
+        return self.tag
 
 
 class Portfolio(models.Model):
     image = models.ManyToManyField(PortfolioImages, db_index=True)
     description = models.TextField(default="", db_index=True)
+    title = models.CharField(max_length=100, default="", db_index=True)
+    def __str__(self) -> str:
+        return self.title
 
 
 
@@ -89,15 +94,21 @@ class Education(models.Model):
     degree = models.CharField(max_length=100, default="", db_index=True)
     from_year = models.DateField(db_index=True)
     to_year = models.DateField(db_index=True)
+    def __str__(self) -> str:
+        return self.college_name
 
 
 class Awards(models.Model):
     institue_name = models.CharField(max_length=100, default="", db_index=True)
     awar_name = models.CharField(max_length=100, default="", db_index=True)
     year = models.DateField(db_index=True)
+    def __str__(self) -> str:
+        return self.awar_name
 
 class Skills(models.Model):
     skill_name = models.CharField(max_length=100, default="", db_index=True)
+    def __str__(self) -> str:
+        return self.skill_name
 
 
 class Profile(models.Model):
@@ -106,5 +117,7 @@ class Profile(models.Model):
     bio = models.TextField(db_index=True)
     experience = models.TextField(db_index=True)
     education = models.ManyToManyField(Education, db_index=True)
-    awards = models.ManyToManyField(Awards, db_index=True)
+    awards = models.ManyToManyField(Awards, db_index=True, blank=True)
     skills = models.ManyToManyField(Skills, db_index=True)
+    def __str__(self) -> str:
+            return self.full_name
