@@ -33,10 +33,10 @@ class ContactSerializer(serializers.ModelSerializer):
 class PortfolioImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = PortfolioImages
-        fields = ('media', 'tag')
+        fields = ('image_pb_id', 'media', 'tag')
 
 class PorfolioSerializer(serializers.ModelSerializer):
     image = PortfolioImagesSerializer(many=True)
     class Meta:
         model = Portfolio
-        fields = ('image', 'description')
+        fields = ('slug', 'image', 'description', 'title')
