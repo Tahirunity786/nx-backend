@@ -1,9 +1,45 @@
-from typing import Optional
+import datetime
 import uuid
+import jwt
 from cloudinary.uploader import upload as cloudinary_upload, destroy as cloudinary_destroy
 from ckeditor.fields import RichTextField
 from django.db import models
 from django.utils.text import slugify
+from django.conf import settings
+
+
+
+class AnonymousCookies(models.Model):
+    cookie = models.CharField(max_length=200, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.cookie:  # Generate a unique _id if not already set
+            self.cookie = uuid.uuid4()
+        super().save(*args, **kwargs)
+    
+    def __str__(self)->str:
+        return f"{self.cookie}"
+
+class CustomUser(models.Model):
+    first_name = models.CharField(max_length=100, db_index=True)
+    last_name = models.CharField(max_length=100, db_index=True)
+    email = models.EmailField(db_index=True)
+    joined_date = models.DateTimeField(auto_now_add=True)
+    admin = models.BooleanField(default=False)
+
+    users_messaging_container = models.ManyToManyField('self', symmetrical=False, blank=True)
+    chat_room_id = models.UUIDField(null=True)
+
+    def __str__(self)->str:
+        return f"{self.first_name} {self.last_name}"
+    
+
+    def save(self, *args, **kwargs):
+        if not self.chat_room_id:  # Generate a unique _id if not already set
+            self.chat_room_id = uuid.uuid4()
+        super().save(*args, **kwargs)
 
 
 class Technologies(models.Model):
