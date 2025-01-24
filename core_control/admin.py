@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core_control.models import CustomUser, AnonymousCookies, Service, ContactUS, Technologies, Portfolio, PortfolioImages, Profile, Education, Skills, Awards
+from core_control.models import CustomUser, TokenSaver, AnonymousCookies, Service, ContactUS, Technologies, Portfolio, PortfolioImages, Profile, Education, Skills, Awards
 
 class PortfolioImagesInline(admin.TabularInline):
     model = Portfolio.image.through  # Use the intermediate model
@@ -15,6 +15,7 @@ class PortfolioAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(CustomUser)
+admin.site.register(TokenSaver)
 admin.site.register(AnonymousCookies)
 admin.site.register(Service)
 admin.site.register(ContactUS)

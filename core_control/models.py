@@ -32,6 +32,8 @@ class CustomUser(models.Model):
     users_messaging_container = models.ManyToManyField('self', symmetrical=False, blank=True)
     chat_room_id = models.UUIDField(null=True)
 
+    fcm_token = models.ForeignKey('TokenSaver', on_delete=models.CASCADE, db_index=True, null=True, blank=True, default='')
+
     def __str__(self)->str:
         return f"{self.first_name} {self.last_name}"
     
@@ -40,6 +42,10 @@ class CustomUser(models.Model):
         if not self.chat_room_id:  # Generate a unique _id if not already set
             self.chat_room_id = uuid.uuid4()
         super().save(*args, **kwargs)
+
+class TokenSaver(models.Model):
+    token = models.CharField(max_length=300, db_index=True, default='',  null=True)
+
 
 
 class Technologies(models.Model):

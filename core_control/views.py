@@ -3,14 +3,11 @@ from rest_framework.views import Response, APIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from core_control.serializer import UserSerializer, ContactSerializer, PorfolioSerializer, ServicesSerializer, AnonymousUserSerializer
-from core_control.models import Portfolio, Service
+from core_control.models import Portfolio, Service, AnonymousCookies, TokenSaver
 from core_control.email import send_nx_email
-import jwt
-import datetime
-from django.conf import settings
 from django.contrib.auth import get_user_model, authenticate
-from core_control.utiles import get_tokens_for_user
-
+from core_control.utiles import get_tokens_for_user, generate_jwt_token, decode_jwt_token
+from core_control.models import CustomUser
 User = get_user_model()
 
 
@@ -40,10 +37,41 @@ class DashboardLogin(APIView):
         return Response(data_login.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class TokenViewSaver(APIView):
+    permission_classes = [AllowAny]
 
+    def post(self, request):
+        data_token = request.data.get('token')
+        fcm_token = request.data.get('fcm_token')
+        try:
+            if not data_token and fcm_token:
+                return Response({'success':False}, status=status.HTTP_400_BAD_REQUEST)
+            
+            user_id = decode_jwt_token(token=data_token)
+            if not user_id:
+                return Response({'success':False}, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                cooke = AnonymousCookies.objects.get(cookie=user_id)
+                user = cooke.user
 
+            except CustomUser.DoesNotExist:
+                return Response({'success':False}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if user.fcm_token and user.fcm_token.token: return Response({'success':True}, status=status.HTTP_200_OK)
+            
+            fcm_token = TokenSaver.objects.create(token=fcm_token)
+            
+            user.fcm_token = fcm_token
+            user.save()
 
-
+            return Response({'success':True}, status=status.HTTP_200_OK)
+        except ValueError as e:
+            return Response({'success':False}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'success':False}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
 class ServicesSpreaderView(APIView):
     permission_classes = [AllowAny]
 
@@ -90,16 +118,7 @@ class PortfolioView(APIView):
     
 
 class CookiesHandler(APIView):
-    @staticmethod
-    def generate_jwt_token(ID):
-        # Convert UUID to a string before adding it to the payload
-        payload = {
-            'user_id': str(ID),  # Convert UUID to string
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=120)  # Token expires in 4 months
-        }
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-        return token
-
+ 
     def post(self, request):
         """
         Handles cookie creation and returns the saved cookie to the client.
@@ -112,7 +131,7 @@ class CookiesHandler(APIView):
             # Save the validated data to the database
             cookie_instance = data.save()
             raw_cookie = cookie_instance.cookie
-            cookie = self.generate_jwt_token(raw_cookie)
+            cookie = generate_jwt_token(raw_cookie)
 
             # Prepare the response and set the cookie
             response = Response(
